@@ -2,3 +2,4 @@
 
 * https://rcalix1.github.io/ByHandLibrary/CyberEntropy/index.html
 * https://rcalix1.github.io/ByHandLibrary/CyberEntropy/SampleCyberEntropyByHandproblems.pdf
+* https://rcalix1.github.io/ByHandLibrary/CyberEntropy/SampleAnomalyDetectionByHandproblems.pdf
