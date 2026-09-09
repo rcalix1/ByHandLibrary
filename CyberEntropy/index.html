@@ -38,7 +38,7 @@
 
 <div class="main">    <!-- for the fixed nav bar -->
 
-<h1>Chapter 3 - Traditional Machine Learning (Sample) </h1>
+<h1>Information Theory by Hand (Sample) </h1>
 
     <center>
       <div>
@@ -46,8 +46,6 @@
       </div>
 
     </center>
-
-
 
 
 
@@ -84,7 +82,7 @@
     
 
 <h1>
-Traditional Machine Learning
+Information Theory by Hand
 	
 </h1>
 
@@ -93,23 +91,991 @@ Traditional Machine Learning
 
 
 
+All companion GitHub Code and YouTube videos can be found here: 
 
 
-In this chapter, I will address some of the traditional machine learning topics. I will use python, numpy, and the Sklearn library to provide example code on
-	how to use the different models and other tools. I will quickly move through KNN to arrive at other algorithms. 
-	Much of what we learn from using the SKlearn tool kit can be integrated with PyTorch to make your deep learning code more powerful and modular. 
-	That way, you will be able to re-use your code for many different tasks. I will not focus on the theory of traditional machine learning algorithms here. 
-	There are many books on the theory of machine learning algorithms so instead I will concentrate on the practical aspects of using them in Python.  
+https://www.rcalix.com
+
+
+</br>
 
 
 
-Machine Learning (ML) is essential to enable automated systems to make decisions and to infer new knowledge about the world. This section describes some of the most
-	important traditional methodologies currently in use in the field of machine learning. Machine learning approaches can be divided into supervised learning
-	(such as Support Vector Machines) and unsupervised learning (such as K-means clustering). Within supervised approaches, 
-	the learning methodologies can be divided, based on whether they predict a class or a magnitude, into classification and regression approaches, respectively. 
-	An additional categorization for ML methods depends on whether they use sequential or non-sequential data. 
+
+<div style="
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 25px 0;
+    background-color: white;
+    line-height: 1.6;
+">
+
+    <div style="
+        font-weight: bold;
+        font-size: 1.1em;
+        margin-bottom: 14px;
+    ">
+        Did You Know? Charles Babbage, Computing, and Cryptanalysis
+    </div>
+
+    <p>
+        Charles Babbage is famous for designing the Difference Engine and the
+        Analytical Engine, important early steps toward the modern computer.
+        Interestingly, Babbage was also a cryptanalyst. In the nineteenth century,
+        he developed methods for breaking the Vigenère cipher by finding patterns
+        in encrypted messages.
+    </p>
+
+    <p>
+        There is some irony in using Babbage as inspiration for a "By Hand" book.
+        Babbage designed machines precisely because he wanted to automate tedious
+        human calculations. In this book, however, we temporarily go in the opposite
+        direction: we perform the calculations by hand so that we can understand
+        what the computer will eventually automate.
+    </p>
+
+    <p>
+        <strong>
+            In the age of AI, we can increasingly outsource our thinking to
+            machines, but we cannot outsource our understanding.
+        </strong>
+    </p>
+
+</div>
+	
+
+	
+\begin{tcolorbox}[
+    title=\textbf{Did You Know? Charles Babbage, Computing, and Cryptanalysis},
+    colback=white,
+    colframe=black,
+    boxrule=0.8pt,
+    arc=2mm
+]
+
+Charles Babbage is famous for designing the Difference Engine and the
+Analytical Engine, important early steps toward the modern computer.
+Interestingly, Babbage was also a cryptanalyst. In the nineteenth century,
+he developed methods for breaking the Vigen\`ere cipher by finding patterns
+in encrypted messages.
+
+There is some irony in using Babbage as inspiration for a ``By Hand'' book.
+Babbage designed machines precisely because he wanted to automate tedious
+human calculations. In this book, however, we temporarily go in the opposite
+direction: we perform the calculations by hand so that we can understand
+what the computer will eventually automate.
+
+\medskip
+
+\textbf{In the age of AI, we can increasingly outsource our thinking to
+machines, but we cannot outsource our understanding.}
+
+\end{tcolorbox}
 
 
+
+
+<h3>
+	Problem 1: Entropy from Authentication Logs
+</h3>
+
+	
+
+
+A security analyst is monitoring authentication activity on an SSH server. 
+During a short observation period, the following authentication events were 
+recorded:
+
+
+
+
+
+
+<center>
+<div>
+<textarea rows="8" cols="100">
+
+??
+  
+</textarea>
+  
+</div>
+</center>
+
+
+	
+
+\begin{center}
+\begin{tabular}{c|c}
+\textbf{Event} & \textbf{Authentication Result} \\
+\hline
+1  & Success \\
+2  & Success \\
+3  & Failed  \\
+4  & Success \\
+5  & Failed  \\
+6  & Success \\
+7  & Success \\
+8  & Failed  \\
+9  & Success \\
+10 & Failed  \\
+\end{tabular}
+\end{center}
+
+The analyst would like to quantify the uncertainty in the authentication 
+results using entropy.
+
+Recall that entropy can be calculated as
+
+\[
+H(X) = -\sum_x p(x)\log_2 p(x)
+\]
+
+where \(p(x)\) is the probability of observing outcome \(x\).
+
+\begin{enumerate}
+
+\item Count the number of successful and failed authentication attempts.
+
+\item Using the observed data, estimate
+
+\[
+P(\text{Success})
+\]
+
+and
+
+\[
+P(\text{Failed}).
+\]
+
+\item Calculate the entropy of the authentication results by hand.
+
+\item Now consider a second observation period containing 10 authentication
+attempts, where 5 are successful and 5 are failed. Calculate the entropy for
+this second observation period.
+
+\item Which observation period has the greater entropy?
+
+\item From a cybersecurity perspective, explain what the difference in entropy
+tells the security analyst about the authentication activity observed during
+the two periods.
+
+\end{enumerate}
+
+
+
+
+\subsection{Problem 2: KL Divergence and Network Traffic Anomalies}
+
+A cybersecurity analyst monitors the destination ports used by connections
+to a server. During a normal observation period, the following 10 connections
+were recorded:
+
+\begin{center}
+\begin{tabular}{c|c}
+\textbf{Connection} & \textbf{Destination Port} \\
+\hline
+1  & 443 \\
+2  & 443 \\
+3  & 443 \\
+4  & 443 \\
+5  & 443 \\
+6  & 443 \\
+7  & 22  \\
+8  & 22  \\
+9  & 80  \\
+10 & 80  \\
+\end{tabular}
+\end{center}
+
+
+
+<center>
+<div>
+<textarea rows="8" cols="100">
+
+??
+  
+</textarea>
+  
+</div>
+</center>
+
+Later, the analyst observes another 10 connections:
+
+\begin{center}
+\begin{tabular}{c|c}
+\textbf{Connection} & \textbf{Destination Port} \\
+\hline
+1  & 443 \\
+2  & 443 \\
+3  & 443 \\
+4  & 22  \\
+5  & 22  \\
+6  & 22  \\
+7  & 22  \\
+8  & 80  \\
+9  & 80  \\
+10 & 80  \\
+\end{tabular}
+\end{center}
+
+
+
+<center>
+<div>
+<textarea rows="8" cols="100">
+
+??
+  
+</textarea>
+  
+</div>
+</center>
+
+Treat the first observation period as the normal baseline distribution \(P\)
+and the second observation period as the current distribution \(Q\).
+
+The KL divergence is
+
+\[
+D_{KL}(P\|Q)
+=
+\sum_x P(x)\log_2
+\left(
+\frac{P(x)}{Q(x)}
+\right).
+\]
+
+\begin{enumerate}
+
+\item Count the number of connections to ports 443, 22, and 80 during the
+normal observation period.
+
+\item Use these counts to determine the baseline probabilities
+
+\[
+P(443), \qquad P(22), \qquad P(80).
+\]
+
+\item Repeat the process for the current observation period to determine
+
+\[
+Q(443), \qquad Q(22), \qquad Q(80).
+\]
+
+\item Calculate
+
+\[
+D_{KL}(P\|Q)
+\]
+
+by hand.
+
+\item Explain what the resulting KL divergence tells the cybersecurity
+analyst about the current network traffic.
+
+\item Explain how KL divergence could be used as part of an anomaly detection
+system that continuously compares current network activity with a normal
+baseline.
+
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+\subsection{Problem 3: From Cybersecurity Data to KL Divergence}
+
+A cybersecurity monitoring system records security alerts generated by three
+different detection rules:
+
+\begin{itemize}
+    \item Authentication Alert
+    \item Port Scanning Alert
+    \item Malware Alert
+\end{itemize}
+
+During a baseline observation period, the following alerts were recorded:
+
+\begin{center}
+\begin{tabular}{c|c}
+\textbf{Alert} & \textbf{Alert Type} \\
+\hline
+1 & Authentication \\
+2 & Authentication \\
+3 & Port Scanning \\
+\end{tabular}
+\end{center}
+
+During a later observation period, the following alerts were recorded:
+
+\begin{center}
+\begin{tabular}{c|c}
+\textbf{Alert} & \textbf{Alert Type} \\
+\hline
+1 & Authentication \\
+2 & Port Scanning \\
+3 & Port Scanning \\
+\end{tabular}
+\end{center}
+
+We will use the number of alerts of each type as a simple score representing
+the activity observed during each period.
+
+\begin{enumerate}
+
+\item Count the Authentication, Port Scanning, and Malware alerts during the
+baseline period. Construct the score vector
+
+\[
+\mathbf{z}_P=
+[
+N_{\text{Authentication}},
+N_{\text{Scanning}},
+N_{\text{Malware}}
+].
+\]
+
+\item Repeat the process for the later observation period and construct
+
+\[
+\mathbf{z}_Q=
+[
+N_{\text{Authentication}},
+N_{\text{Scanning}},
+N_{\text{Malware}}
+].
+\]
+
+\end{enumerate}
+
+The values in these vectors are scores, not probability distributions.
+Machine learning systems commonly use the Softmax function to transform a
+vector of scores into a probability distribution.
+
+For a score \(z_i\), Softmax is
+
+\[
+P(z_i)
+=
+\frac{e^{z_i}}
+{\sum_j e^{z_j}}.
+\]
+
+For this problem, use
+
+\[
+e^0=1,
+\qquad
+e^1\approx2.718,
+\qquad
+e^2\approx7.389.
+\]
+
+\begin{enumerate}
+\setcounter{enumi}{2}
+
+\item Apply Softmax to the baseline score vector to obtain the probability
+distribution \(P\).
+
+\item Apply Softmax to the later score vector to obtain the probability
+distribution \(Q\).
+
+\item Verify that each probability distribution sums to approximately 1.
+
+\item Calculate the KL divergence
+
+\[
+D_{KL}(P\|Q)
+=
+\sum_i P_i
+\ln
+\left(
+\frac{P_i}{Q_i}
+\right).
+\]
+
+\item Explain what the KL divergence tells the cybersecurity analyst about
+the change in the distribution of security alerts.
+
+\item PyTorch's KL divergence implementation expects its input in
+log-probability form. Calculate
+
+\[
+\ln(P_1),\qquad
+\ln(P_2),\qquad
+\ln(P_3).
+\]
+
+Explain the relationship between the calculations performed in this problem
+and the use of \texttt{softmax} and \texttt{log\_softmax} when KL divergence
+is calculated using PyTorch.
+
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Problem 4: Mutual Information and Cybersecurity Feature Selection}
+
+
+Mutual information can be calculated as
+
+\[
+I(X;Y)=
+\sum_{x,y}p(x,y)
+\log_2
+\left(
+\frac{p(x,y)}{p(x)p(y)}
+\right)
+\]
+
+The procedure is:
+
+\begin{enumerate}
+\item Count the occurrences of each \(X,Y\) combination.
+\item Calculate the joint probabilities \(p(x,y)\).
+\item Calculate the marginal probabilities \(p(x)\) and \(p(y)\).
+\item Substitute these probabilities into the mutual information equation.
+\end{enumerate}
+
+
+A cybersecurity analyst is developing a system for identifying malicious
+login activity. The analyst has collected a small set of previously
+investigated login attempts. Each login has been labeled as either Normal
+or Attack.
+
+The analyst is considering whether the feature \textit{Failed Authentication}
+contains useful information about the security label.
+
+The following observations were collected:
+
+\begin{center}
+\begin{tabular}{c|c|c}
+\textbf{Login} & \textbf{Failed Authentication} & \textbf{Security Label} \\
+\hline
+1 & No  & Normal \\
+2 & No  & Normal \\
+3 & No  & Normal \\
+4 & No  & Normal \\
+5 & Yes & Attack \\
+6 & Yes & Attack \\
+7 & Yes & Attack \\
+8 & No  & Attack \\
+\end{tabular}
+\end{center}
+
+
+
+<center>
+<div>
+<textarea rows="8" cols="100">
+
+??
+  
+</textarea>
+  
+</div>
+</center>
+	
+
+Let
+
+\[
+F =
+\begin{cases}
+0 & \text{No failed authentication}\\
+1 & \text{Failed authentication}
+\end{cases}
+\]
+
+and
+
+\[
+C =
+\begin{cases}
+0 & \text{Normal}\\
+1 & \text{Attack}.
+\end{cases}
+\]
+
+Mutual information measures how much information one variable provides
+about another variable.
+
+For two variables \(F\) and \(C\),
+
+\[
+I(F;C)
+=
+\sum_{f,c}
+P(f,c)
+\log_2
+\left(
+\frac{P(f,c)}
+{P(f)P(c)}
+\right).
+\]
+
+The value \(P(f,c)\) is the joint probability of observing a particular
+feature value and class label together.
+
+\begin{enumerate}
+
+\item Count the number of Normal and Attack observations and determine
+
+\[
+P(C=0)
+\qquad \text{and} \qquad
+P(C=1).
+\]
+
+\item Count the number of observations with and without a failed
+authentication and determine
+
+\[
+P(F=0)
+\qquad \text{and} \qquad
+P(F=1).
+\]
+
+\item From the original observations, complete the following joint-frequency
+table:
+
+\[
+\begin{array}{c|cc}
+ & C=0 & C=1 \\
+\hline
+F=0 & ? & ? \\
+F=1 & ? & ?
+\end{array}
+\]
+
+\item Convert the joint frequencies into the joint probabilities
+
+\[
+P(F=0,C=0),
+\quad
+P(F=0,C=1),
+\quad
+P(F=1,C=0),
+\quad
+P(F=1,C=1).
+\]
+
+\item Calculate the mutual information
+
+\[
+I(F;C)
+\]
+
+by hand.
+
+When a joint probability is zero, its contribution to the mutual
+information sum can be treated as zero.
+
+\item If
+
+\[
+I(F;C)=0,
+\]
+
+the failed-authentication feature would provide no information about the
+security label. Based on the value calculated in this problem, does the
+feature appear to contain useful information about whether a login is
+Normal or an Attack?
+
+\item Explain why mutual information could be useful when selecting
+cybersecurity features for a machine learning or anomaly detection system.
+
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+\subsection{Problem 5: Information Gain from Cybersecurity Data}
+
+Information Gain measures how much knowing a feature reduces the uncertainty
+about an outcome. It is defined as
+
+\[
+IG(C,F)=H(C)-H(C|F),
+\]
+
+where \(C\) is the outcome and \(F\) is a feature.
+
+Consider the following network observations collected by a security analyst:
+
+\begin{center}
+\begin{tabular}{c|c|c}
+\textbf{Connection} & \textbf{Unusual Port} & \textbf{Classification} \\
+\hline
+1 & No  & Normal \\
+2 & No  & Normal \\
+3 & No  & Normal \\
+4 & No  & Attack \\
+5 & Yes & Attack \\
+6 & Yes & Attack \\
+7 & Yes & Attack \\
+8 & Yes & Normal \\
+\end{tabular}
+\end{center}
+
+Let \(C\) represent the Classification and \(F\) represent whether an
+Unusual Port was observed.
+
+Recall that entropy is
+
+\[
+H(C)=-\sum_c p(c)\log_2 p(c).
+\]
+
+\begin{enumerate}
+
+\item Count the number of Normal and Attack connections and determine their
+probabilities.
+
+\item Calculate the entropy of the classifications,
+
+\[
+H(C).
+\]
+
+\item Separate the data into connections where Unusual Port = No and
+Unusual Port = Yes.
+
+For each group, determine the probabilities of Normal and Attack and
+calculate its entropy.
+
+\item Calculate the conditional entropy
+
+\[
+H(C|F)
+=
+p(F=\text{No})H(C|F=\text{No})
++
+p(F=\text{Yes})H(C|F=\text{Yes}).
+\]
+
+\item Calculate the Information Gain
+
+\[
+IG(C,F)=H(C)-H(C|F).
+\]
+
+\item Explain what the Information Gain tells the security analyst about
+the usefulness of the Unusual Port feature.
+
+\end{enumerate}
+
+
+
+
+\subsection{Problem 6: Conditional Entropy and Security Alerts}
+
+Conditional Entropy measures how much uncertainty remains about one variable
+after another variable is known. It is defined as
+
+\[
+H(C|F)
+=
+\sum_f p(f)H(C|F=f).
+\]
+
+Consider a security monitoring system that records whether a login originates
+from a previously unseen device. After investigation, each login is also
+classified as Normal or Attack.
+
+The following 10 login events were observed:
+
+\begin{center}
+\begin{tabular}{c|c|c}
+\textbf{Login} & \textbf{New Device} & \textbf{Classification} \\
+\hline
+1  & No  & Normal \\
+2  & No  & Normal \\
+3  & No  & Normal \\
+4  & No  & Normal \\
+5  & No  & Attack \\
+6  & Yes & Normal \\
+7  & Yes & Attack \\
+8  & Yes & Attack \\
+9  & Yes & Attack \\
+10 & Yes & Attack \\
+\end{tabular}
+\end{center}
+
+Let \(C\) represent the Classification and \(F\) represent whether the login
+originated from a New Device.
+
+\begin{enumerate}
+
+\item Separate the observations into the two groups \(F=\text{No}\) and
+\(F=\text{Yes}\).
+
+\item For \(F=\text{No}\), determine the probabilities of Normal and Attack
+and calculate
+
+\[
+H(C|F=\text{No}).
+\]
+
+\item For \(F=\text{Yes}\), determine the probabilities of Normal and Attack
+and calculate
+
+\[
+H(C|F=\text{Yes}).
+\]
+
+\item Determine \(p(F=\text{No})\) and \(p(F=\text{Yes})\).
+
+\item Calculate the overall conditional entropy
+
+\[
+H(C|F)
+=
+p(F=\text{No})H(C|F=\text{No})
++
+p(F=\text{Yes})H(C|F=\text{Yes}).
+\]
+
+\item Calculate the entropy \(H(C)\) without knowing whether the login came
+from a new device.
+
+\item Compare \(H(C)\) and \(H(C|F)\). Explain what this tells the security
+analyst about the usefulness of knowing whether a login originated from a
+new device.
+
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Problem 7: Information-Theoretic Features and Anomaly Detection}
+
+In the previous problems, information-theoretic metrics were calculated
+individually from cyber security data. These metrics can also be combined
+to form a feature vector that describes the behavior of a system during a
+particular observation period.
+
+For example, assume that the following three information-theoretic features
+have been calculated from network activity:
+
+\[
+H_P = \text{entropy of destination-port activity},
+\]
+
+\[
+D_{KL} = \text{KL divergence from the normal destination-port distribution},
+\]
+
+and
+
+\[
+H_A = \text{entropy of authentication activity}.
+\]
+
+These values can be placed into a vector:
+
+\[
+\mathbf{x}
+=
+[H_P,\;D_{KL},\;H_A].
+\]
+
+A feature vector provides a compact numerical description of the observed
+network behavior.
+
+
+\subsubsection*{Cosine Similarity}
+
+One way to compare two feature vectors is cosine similarity.
+
+For two vectors \(\mathbf{x}\) and \(\mathbf{y}\),
+
+\[
+\cos(\theta)
+=
+\frac{\mathbf{x}\cdot\mathbf{y}}
+{\|\mathbf{x}\|\|\mathbf{y}\|}.
+\]
+
+The numerator is the dot product:
+
+\[
+\mathbf{x}\cdot\mathbf{y}
+=
+x_1y_1+x_2y_2+\cdots+x_ny_n.
+\]
+
+The magnitude of a vector is
+
+\[
+\|\mathbf{x}\|
+=
+\sqrt{x_1^2+x_2^2+\cdots+x_n^2}.
+\]
+
+For vectors containing non-negative features such as those used in this
+problem, cosine similarity will range from 0 to 1. A value close to 1
+indicates that the vectors point in similar directions, while a value closer
+to 0 indicates that their patterns are less similar.
+
+Consider the simple vectors
+
+\[
+\mathbf{a}=[1,1]
+\]
+
+and
+
+\[
+\mathbf{b}=[2,2].
+\]
+
+Although their magnitudes are different, they point in exactly the same
+direction. Their cosine similarity is therefore
+
+\[
+\cos(\theta)=1.
+\]
+
+This illustrates an important property of cosine similarity: it primarily
+compares the direction or pattern of the features rather than their absolute
+magnitudes.
+
+
+\subsubsection*{Cyber Security Scenario}
+
+A security analyst has established the following information-theoretic
+feature vector from a period of normal network operation:
+
+\[
+\mathbf{N}
+=
+[1.0,\;0.10,\;1.0].
+\]
+
+The components represent
+
+\[
+[H_P,\;D_{KL},\;H_A].
+\]
+
+During two later monitoring periods, the following feature vectors are
+obtained:
+
+\[
+\mathbf{A}
+=
+[0.9,\;0.20,\;0.8]
+\]
+
+and
+
+\[
+\mathbf{B}
+=
+[0.4,\;1.20,\;0.3].
+\]
+
+\begin{enumerate}
+
+\item Calculate the dot product
+
+\[
+\mathbf{N}\cdot\mathbf{A}.
+\]
+
+\item Calculate the magnitudes
+
+\[
+\|\mathbf{N}\|
+\]
+
+and
+
+\[
+\|\mathbf{A}\|.
+\]
+
+\item Calculate the cosine similarity between \(\mathbf{N}\) and
+\(\mathbf{A}\).
+
+\item Repeat the calculation for \(\mathbf{N}\) and \(\mathbf{B}\).
+
+\item Which monitoring period is more similar to the normal baseline?
+
+\item Which monitoring period would be more interesting to a security analyst
+looking for anomalous behavior?
+
+\item Explain why cosine similarity alone should not be considered proof that
+an attack has occurred.
+
+\end{enumerate}
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+\section{Summary}
+
+Mastering these problems is fundamental to mastering Information Theoretic metrics for cyber security.  
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+	
 Classifiers are machine learning approaches that produce as an output a specific class given some input features. Important classifiers include
 	Support Vector Machines (Burges 1998) commonly implemented using LibSVM (Chang and Lin, 2001), Naïve Bayes, artificial neural networks,
 	deep learning based neural networks, decision trees, random forests, and the k-nearest neighbor classifier. 
